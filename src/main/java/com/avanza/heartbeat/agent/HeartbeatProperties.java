@@ -63,4 +63,9 @@ public class HeartbeatProperties {
 		return Optional.ofNullable(jmxPort);
 	}
 	
+	public String toString() {
+		return "HeartbeatProperties [applicationName=" + applicationName + ", pid=" + pid + ", version=" + version
+				+ ", jmxPort=" + jmxPort + ", url=" + url + "]";
+	}
+
 }
