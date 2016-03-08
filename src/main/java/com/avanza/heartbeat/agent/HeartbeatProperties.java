@@ -38,8 +38,8 @@ public class HeartbeatProperties {
 	}
 
 	private void validatePid(int pid) {
-		if (pid < 1) {
-			throw new IllegalArgumentException("Pid must be > 0, was: " + pid);
+		if (pid < 0) {
+			throw new IllegalArgumentException("Pid must be >= 0, was: " + pid);
 		}
 	}
 

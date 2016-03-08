@@ -71,7 +71,9 @@ public class HeartbeatClient {
 	private int connectAndGetResponseCode(HttpURLConnection connection) {
 		try {
 			connection.connect();
-			return connection.getResponseCode();
+			int responseCode = connection.getResponseCode();
+			connection.disconnect();
+			return responseCode;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
