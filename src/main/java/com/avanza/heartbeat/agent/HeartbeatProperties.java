@@ -1,6 +1,8 @@
 package com.avanza.heartbeat.agent;
 
+import java.net.URL;
 import java.util.Objects;
+import java.util.Optional;
 
 public class HeartbeatProperties {
 
@@ -8,8 +10,10 @@ public class HeartbeatProperties {
 	private final int pid;
 	private final String version;
 	private final Integer jmxPort;
+	private final URL url;
 
-	public HeartbeatProperties(String applicationName, int pid, String version, int jmxPort) {
+	public HeartbeatProperties(URL url, String applicationName, int pid, String version, int jmxPort) {
+		this.url = Objects.requireNonNull(url);
 		this.applicationName = Objects.requireNonNull(applicationName);
 		validatePid(pid);
 		this.pid = pid;
@@ -18,7 +22,8 @@ public class HeartbeatProperties {
 		this.jmxPort = jmxPort;
 	}
 
-	public HeartbeatProperties(String applicationName, int pid, String version) {
+	public HeartbeatProperties(URL url, String applicationName, int pid, String version) {
+		this.url = Objects.requireNonNull(url);
 		this.applicationName = Objects.requireNonNull(applicationName);
 		validatePid(pid);
 		this.pid = pid;
@@ -38,6 +43,10 @@ public class HeartbeatProperties {
 		}
 	}
 
+	public URL getUrl() {
+		return url;
+	}
+
 	public String getApplicationName() {
 		return applicationName;
 	}
@@ -50,8 +59,8 @@ public class HeartbeatProperties {
 		return version;
 	}
 
-	public Integer getJmxPort() {
-		return jmxPort;
+	public Optional<Integer> getJmxPort() {
+		return Optional.ofNullable(jmxPort);
 	}
 	
 }
