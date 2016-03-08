@@ -9,4 +9,9 @@ public class SystemPropertiesPropertySource implements PropertySource {
 		return System.getProperties();
 	}
 
+	@Override
+	public String toString() {
+		return "SystemPropertiesPropertySource";
+	}
+
 }

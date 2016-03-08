@@ -25,4 +25,9 @@ public class ChainedPropertySource implements PropertySource {
 		return result;
 	}
 
+	@Override
+	public String toString() {
+		return "ChainedPropertySource [sources=" + sources + "]";
+	}
+
 }

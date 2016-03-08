@@ -35,4 +35,9 @@ public class HttpResourcePropertySource implements PropertySource {
 		return p;
 	}
 
+	@Override
+	public String toString() {
+		return "HttpResourcePropertySource [url=" + url + "]";
+	}
+	
 }
