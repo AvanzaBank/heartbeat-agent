@@ -24,14 +24,24 @@ import java.util.Optional;
 public class HeartbeatAgent {
 
 	private static final Logger log = new Logger(HeartbeatAgent.class);
+	
+	private static HeartbeatClient client;
 
 	public static void premain(String args, Instrumentation inst) {
 		try {
-			HeartbeatClient client = configureClient(args);
+			log.info("Heartbeat Agent started with premain method, args: " + args);
+			client = configureClient(args);
 			client.start();
 		} catch (Exception e) {
 			log.warn("Failed to start heart beat client, heartbeats will be disabled");
 			log.logStacktrace(e);
+		}
+	}
+	
+	public static void stop() {
+		if (client != null) {
+			log.info("Stopping heartbeat client...");
+			client.stop();
 		}
 	}
 

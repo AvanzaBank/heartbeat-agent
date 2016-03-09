@@ -43,11 +43,12 @@ public class HeartbeatClient {
 	}
 
 	public void start() {
-		log.info("Starting heartbeat with properties: " + props);
+		log.info("Starting heartbeat client with properties: " + props);
 		scheduledExecutor.scheduleAtFixedRate(this::doBeat, 0, heartbeatInterval, TimeUnit.MILLISECONDS);
 	}
 	
 	public void stop() {
+		log.info("Stopping heartbeat client with properties: " + props);
 		scheduledExecutor.shutdown();
 	}
 	
