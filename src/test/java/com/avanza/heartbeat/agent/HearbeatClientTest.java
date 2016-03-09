@@ -1,14 +1,12 @@
 package com.avanza.heartbeat.agent;
 
 import static com.avanza.heartbeat.agent.AsyncTestUtils.*;
-import static java.util.stream.Collectors.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Rule;
@@ -34,7 +32,7 @@ public class HearbeatClientTest {
 	
     @Test
     public void allProperties() throws Exception {
-    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort() + "/beat"), "my-app", 123, "1.0.0", 11223);
+    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 11223);
     	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"), 5000);
     	client.start();
     	Map<String, String> expected = new HashMap<>();
@@ -48,7 +46,7 @@ public class HearbeatClientTest {
 
     @Test
     public void optionalJmxPort() throws Exception {
-    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort() + "/beat"), "my-app", 123, "1.0.0");
+    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0");
     	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"), 5000);
     	client.start();
     	Map<String, String> expected = new HashMap<>();
@@ -62,7 +60,7 @@ public class HearbeatClientTest {
     @SuppressWarnings("unchecked")
 	@Test
     public void moreThanOneHeartbeatIsMade() throws Exception {
-    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort() + "/beat"), "my-app", 123, "1.0.0", 11223);
+    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 11223);
     	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"), 200);
     	client.start();
     	Map<String, String> expected = new HashMap<>();

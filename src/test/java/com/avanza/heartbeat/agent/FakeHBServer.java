@@ -15,22 +15,21 @@ import javax.servlet.http.HttpServletResponse;
 import com.avanza.heartbeat.agent.util.WebRequestHandler;
 
 class FakeHBServer implements WebRequestHandler {
-	
+
 	private List<Map<String, String>> handledRequests = new ArrayList<>();
 
-    @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response) {
-    	if (request.getRequestURI().equals("/beat")) {
-    		Set<Entry<String, String[]>> entrySet = request.getParameterMap().entrySet();
-    		Map<String, String> params = entrySet.stream().collect(toMap(entry -> entry.getKey(), this::getValueOrThrowIfMultiple));
-    		handledRequests.add(params);
-    	}
-    	try {
-    		response.flushBuffer();
-    	} catch (IOException e) {
-    		throw new RuntimeException(e);
-    	}
-    }
+	@Override
+	public void handle(HttpServletRequest request, HttpServletResponse response) {
+		Set<Entry<String, String[]>> entrySet = request.getParameterMap().entrySet();
+		Map<String, String> params = entrySet.stream()
+				.collect(toMap(entry -> entry.getKey(), this::getValueOrThrowIfMultiple));
+		handledRequests.add(params);
+		try {
+			response.flushBuffer();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	private String getValueOrThrowIfMultiple(Entry<String, String[]> entry) {
 		if (entry.getValue().length > 1) {
@@ -42,6 +41,5 @@ class FakeHBServer implements WebRequestHandler {
 	public List<Map<String, String>> getHandledRequests() {
 		return handledRequests;
 	}
-    
-    
+
 }
