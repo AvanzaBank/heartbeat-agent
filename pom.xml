@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.avanza.heartbeat</groupId>
 	<artifactId>heartbeat-agent</artifactId>
-	<version>MASTER-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
 	<properties>
