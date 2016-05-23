@@ -1,6 +1,8 @@
 # heartbeat-agent
 
-Java agent for sending periodic heartbeats to a HTTP endpoint. Useful for keeping track of which applications are alive or keeping an inventory of all your applications.
+Java agent for sending periodic heartbeats to an HTTP endpoint. Useful for keeping track of which applications are alive or keeping an inventory of all your applications.
+
+The agent has no dependencies. Hence, there is no risk for version conflicts with any third party libraries you may be running.
 
 ## Installation
 
@@ -24,3 +26,7 @@ Heartbeats will be sent using a GET request to the URL specified in `heartbeat.a
 * `uid` - a unique UUID created on initialization - will change on restarts
 * `revision` - the value of `heartbeat.agent.application.version` or "UNKNOWN" if not specified
 * `jmx` - the JMX port the process is listening on or 0 if not listening for JMX connections
+
+## Requirements
+
+Requires Java 8.
