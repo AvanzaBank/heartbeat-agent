@@ -29,7 +29,7 @@ import java.util.Optional;
 /**
  * Java agent for sending HTTP heartbeats to a server.
  * 
- * Launch the agent by adding the JVM argument {@code -javaagent:<path to jar>=<optional http url to properties file>}.
+ * Launch the agent by adding the JVM argument {@code -javaagent:<path to jar>=<optional url to properties file>}.
  * The following properties are required:
  * <ul>
  * <li>{@code heartbeat.agent.application.name=<application name>}
@@ -77,22 +77,22 @@ public class HeartbeatAgent {
 	}
 
 	private static PropertySource createPropertySource(String propertyUrl) {
-		Optional<HttpResourcePropertySource> httpSource = createHttpPropertySource(propertyUrl);
-		return httpSource
+		Optional<UrlResourcePropertySource> urlSource = createUrlPropertySource(propertyUrl);
+		return urlSource
 				.map(source -> (PropertySource) new ChainedPropertySource(new SystemPropertiesPropertySource(), source))
 				.orElseGet(() -> new SystemPropertiesPropertySource());
 	}
 
-	private static Optional<HttpResourcePropertySource> createHttpPropertySource(String propertyUrl) {
+	private static Optional<UrlResourcePropertySource> createUrlPropertySource(String propertyUrl) {
 		if (propertyUrl == null || propertyUrl.trim().isEmpty()) {
 			return Optional.empty();
 		}
 		try {
 			URL url = new URL(propertyUrl);
-			HttpResourcePropertySource httpSource = new HttpResourcePropertySource(url);
-			return Optional.of(httpSource);
+			UrlResourcePropertySource urlSource = new UrlResourcePropertySource(url);
+			return Optional.of(urlSource);
 		} catch (Exception e) {
-			log.warn("HTTP property source specified but could not be created, will not create one");
+			log.warn("URL property source specified but could not be created, will not create one");
 			log.logStacktrace(e);
 			return Optional.empty();
 		}

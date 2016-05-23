@@ -39,7 +39,7 @@ import org.junit.Test;
 import com.avanza.heartbeat.agent.util.WebContainerRule;
 import com.avanza.heartbeat.agent.util.WebRequestHandler;
 
-public class HttpResourcePropertySourceTest {
+public class UrlResourcePropertySourceTest {
 
 	public static class ReturnPropertiesHandler implements WebRequestHandler {
 
@@ -63,7 +63,7 @@ public class HttpResourcePropertySourceTest {
 
 	@Test
 	public void getProperties() throws Exception {
-		HttpResourcePropertySource propertySource = new HttpResourcePropertySource(new URL("http://localhost:" + webContainer.getPort()));
+		UrlResourcePropertySource propertySource = new UrlResourcePropertySource(new URL("http://localhost:" + webContainer.getPort()));
 		Properties p = propertySource.getProperties();
 		assertThat(p.getProperty("foo"), equalTo("bar"));
 		assertThat(p.getProperty("foo.baz"), equalTo("foobar"));

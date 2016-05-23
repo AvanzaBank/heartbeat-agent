@@ -28,11 +28,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
 
-public class HttpResourcePropertySource implements PropertySource {
+public class UrlResourcePropertySource implements PropertySource {
 
 	private final URL url;
 
-	public HttpResourcePropertySource(URL url) {
+	public UrlResourcePropertySource(URL url) {
 		this.url = url;
 	}
 
@@ -57,9 +57,9 @@ public class HttpResourcePropertySource implements PropertySource {
 		return p;
 	}
 
-	@Override
-	public String toString() {
-		return "HttpResourcePropertySource [url=" + url + "]";
-	}
-	
+    @Override
+    public String toString() {
+        return "UrlResourcePropertySource [url=" + url + "]";
+    }
+
 }
