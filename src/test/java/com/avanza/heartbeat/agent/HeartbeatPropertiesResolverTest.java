@@ -22,8 +22,10 @@
  */
 package com.avanza.heartbeat.agent;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
 
 import java.net.URL;
 import java.util.Optional;
@@ -47,6 +49,23 @@ public class HeartbeatPropertiesResolverTest {
 		assertThat(props.getVersion(), equalTo("1.0"));
 		assertThat(props.getPid(), greaterThan(0));
 		assertThat(props.getJmxPort(), not(equalTo(Optional.empty())));
+		assertThat(props.getJmxPort().get(), equalTo(123));
 	}
 
+	@Test
+	public void resolvePropertieswithavanzajmxPortPropertySet() throws Exception {
+		Properties p = new Properties();
+		p.setProperty("heartbeat.agent.application.name", "my-app");
+		p.setProperty("heartbeat.agent.url", "http://my.heartbeat.server/beat");
+		p.setProperty("heartbeat.agent.application.version", "1.0");
+		System.setProperty("se.avanzabank.app.jmxport", "123");
+		HeartbeatPropertiesResolver resolver = new HeartbeatPropertiesResolver(() -> p);
+		HeartbeatProperties props = resolver.resolveProperties();
+		assertThat(props.getApplicationName(), equalTo("my-app"));
+		assertThat(props.getUrl(), equalTo(new URL("http://my.heartbeat.server/beat")));
+		assertThat(props.getVersion(), equalTo("1.0"));
+		assertThat(props.getPid(), greaterThan(0));
+		assertThat(props.getJmxPort(), not(equalTo(Optional.empty())));
+		assertThat(props.getJmxPort().get(), equalTo(123));
+	}
 }

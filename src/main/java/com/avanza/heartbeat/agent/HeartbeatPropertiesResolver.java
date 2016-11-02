@@ -48,20 +48,20 @@ public class HeartbeatPropertiesResolver {
 		URL url = getUrl(props);
 		String applicationName = getRequiredProperty(props, NAME_PROPERTY);
 		int pid = getPid();
-		Integer jmxPort = getJmxPort();
-		if (jmxPort != null) {
+		int jmxPort = getJmxPort();
+		if (jmxPort > 0) {
 			return new HeartbeatProperties(url, applicationName, pid, version, jmxPort);
 		} else {
 			return new HeartbeatProperties(url, applicationName, pid, version);
 		}
 	}
 
-	private Integer getJmxPort() {
-		String value = System.getProperty("com.sun.management.jmxremote.port");
+	private int getJmxPort() {
+		String value = System.getProperty("se.avanzabank.app.jmxport", System.getProperty("com.sun.management.jmxremote.port", "0"));
 		try {
 			return Integer.parseInt(value);
 		} catch (NumberFormatException e) {
-			return null;
+			return 0;
 		}
 	}
 
