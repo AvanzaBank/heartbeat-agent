@@ -145,5 +145,34 @@
 		</plugins>
 	</build>
 
-
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<version>1.4.1</version>
+						<executions>
+							<execution>
+								<id>enforce</id>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+							</execution>
+						</executions>							
+						<configuration>
+							<rules>
+								<requireReleaseDeps>
+									<message>No SNAPSHOT dependencies are allowed when building a release!</message>
+								</requireReleaseDeps>
+							</rules>
+							<fail>true</fail>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
