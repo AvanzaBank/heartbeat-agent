@@ -44,7 +44,7 @@ public class HeartbeatClient {
 	private final URL heartbeatUrl;
 	private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor(HeartbeatClient::createDaemonThread);
 	private final Logger log = new Logger(HeartbeatClient.class);
-	private long heartbeatInterval;
+	private final long heartbeatInterval;
 	
 	private static Thread createDaemonThread(Runnable r) {
 		Thread t = new Thread(r);
@@ -77,13 +77,15 @@ public class HeartbeatClient {
 	private void doBeat() {
 		try {
 			tryBeat();
+		} catch (IOException e) {
+			log.warn("Failed to connect to heartbeat server. Url was " + props.getUrl() + ". Error message: " + e.getMessage());
 		} catch (Exception e) {
-			log.warn("Error when sending heartbeat");
+			log.warn("Error when sending heartbeat. Url was " + props.getUrl());
 			log.logStacktrace(e);
 		}
 	}
 
-	private void tryBeat() {
+	private void tryBeat() throws IOException {
 		HttpURLConnection connection = createConnection(heartbeatUrl);
 		int responseCode = connectAndGetResponseCode(connection);
 		if (responseCode != HttpURLConnection.HTTP_OK) {
@@ -91,29 +93,21 @@ public class HeartbeatClient {
 		}
 	}
 
-	private int connectAndGetResponseCode(HttpURLConnection connection) {
-		try {
-			connection.connect();
-			int responseCode = connection.getResponseCode();
-			connection.disconnect();
-			return responseCode;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	private int connectAndGetResponseCode(HttpURLConnection connection) throws IOException {
+		connection.connect();
+		int responseCode = connection.getResponseCode();
+		connection.disconnect();
+		return responseCode;
 	}
 
-	private HttpURLConnection createConnection(URL url) {
-		try {
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setConnectTimeout(CONNECT_TIMEOUT);
-			connection.setReadTimeout(READ_TIMEOUT);
-			connection.setRequestMethod("GET");
-			connection.setRequestProperty("User-Agent", USER_AGENT);
-			connection.addRequestProperty("beat-interval", Long.toString(heartbeatInterval));
-			return connection;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	private HttpURLConnection createConnection(URL url) throws IOException {
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.setConnectTimeout(CONNECT_TIMEOUT);
+		connection.setReadTimeout(READ_TIMEOUT);
+		connection.setRequestMethod("GET");
+		connection.setRequestProperty("User-Agent", USER_AGENT);
+		connection.addRequestProperty("beat-interval", Long.toString(heartbeatInterval));
+		return connection;
 	}
 
 	private URL buildUrl() {
