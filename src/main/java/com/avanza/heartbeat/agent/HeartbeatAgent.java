@@ -79,7 +79,7 @@ public class HeartbeatAgent {
 	private static PropertySource createPropertySource(String propertyUrl) {
 		Optional<UrlResourcePropertySource> urlSource = createUrlPropertySource(propertyUrl);
 		return urlSource
-				.map(source -> (PropertySource) new ChainedPropertySource(new SystemPropertiesPropertySource(), source))
+				.map(source -> (PropertySource) new ChainedPropertySource(source, new SystemPropertiesPropertySource()))
 				.orElseGet(() -> new SystemPropertiesPropertySource());
 	}
 
