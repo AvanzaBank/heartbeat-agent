@@ -30,6 +30,8 @@ import java.util.Properties;
 
 public class UrlResourcePropertySource implements PropertySource {
 
+	private final Logger log = new Logger(UrlResourcePropertySource.class);
+
 	private final URL url;
 
 	public UrlResourcePropertySource(URL url) {
@@ -39,12 +41,25 @@ public class UrlResourcePropertySource implements PropertySource {
 	@Override
 	public Properties getProperties() {
 		try {
-			return tryGetProperties();
+			return tryGetPropertiesWithRetries(10);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	private Properties tryGetPropertiesWithRetries(int maxTries) throws IOException, InterruptedException {
+		int attempt = 0;
+		while(attempt++ < maxTries-1) {
+			try {
+				return tryGetProperties();
+			} catch (Exception e) {
+				log.error("Failed to resolve properties (attempt " + attempt + " of " + maxTries + ")");
+				Thread.sleep(1000);
+			}
+		}
+		return tryGetProperties();
+	}
+	
 	private Properties tryGetProperties() throws IOException {
 		URLConnection connection = url.openConnection();
 		connection.setConnectTimeout(1000);
