@@ -22,9 +22,11 @@
  */
 package com.avanza.heartbeat.agent;
 
-import static com.avanza.heartbeat.agent.AsyncTestUtils.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static com.avanza.heartbeat.agent.AsyncTestUtils.eventually;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItem;
+import static org.junit.Assert.assertThat;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -38,7 +40,7 @@ import com.avanza.heartbeat.agent.util.WebContainerRule;
 
 public class HearbeatClientTest {
     
-    private FakeHBServer hbServer = new FakeHBServer();
+    private final FakeHBServer hbServer = new FakeHBServer();
     
     @Rule
     public WebContainerRule webRule = new WebContainerRule(hbServer);
@@ -54,7 +56,7 @@ public class HearbeatClientTest {
 	
     @Test
     public void allProperties() throws Exception {
-    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 11223);
+    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 0, 11223);
     	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"), 5000);
     	client.start();
     	Map<String, String> expected = new HashMap<>();
@@ -68,7 +70,7 @@ public class HearbeatClientTest {
 
     @Test
     public void optionalJmxPort() throws Exception {
-    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0");
+    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 0);
     	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"), 5000);
     	client.start();
     	Map<String, String> expected = new HashMap<>();
@@ -82,7 +84,7 @@ public class HearbeatClientTest {
     @SuppressWarnings("unchecked")
 	@Test
     public void moreThanOneHeartbeatIsMade() throws Exception {
-    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 11223);
+    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 0, 11223);
     	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"), 200);
     	client.start();
     	Map<String, String> expected = new HashMap<>();
@@ -94,5 +96,13 @@ public class HearbeatClientTest {
     	eventually(() -> assertThat(hbServer.getHandledRequests(), contains(expected, expected)), 2000);
     }
     
+	@Test
+    public void handleInitialDelay() throws Exception {
+    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 2000, 11223);
+    	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"), 200);
+    	client.start();
+    	Thread.sleep(1000);
+    	assertThat(hbServer.getHandledRequests(), empty());
+    }
 
 }

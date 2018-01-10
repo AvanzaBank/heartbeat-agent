@@ -41,6 +41,8 @@ public class HeartbeatPropertiesResolverTest {
 		p.setProperty("heartbeat.agent.application.name", "my-app");
 		p.setProperty("heartbeat.agent.url", "http://my.heartbeat.server/beat");
 		p.setProperty("heartbeat.agent.application.version", "1.0");
+		p.setProperty("heartbeat.agent.application.name", "my-app");
+		p.setProperty("heartbeat.agent.initial.delay", "1000");
 		System.setProperty("com.sun.management.jmxremote.port", "123");
 		HeartbeatPropertiesResolver resolver = new HeartbeatPropertiesResolver(() -> p);
 		HeartbeatProperties props = resolver.resolveProperties();
@@ -50,6 +52,7 @@ public class HeartbeatPropertiesResolverTest {
 		assertThat(props.getPid(), greaterThan(0));
 		assertThat(props.getJmxPort(), not(equalTo(Optional.empty())));
 		assertThat(props.getJmxPort().get(), equalTo(123));
+		assertThat(props.getInitialDelayMs(), equalTo(1000));
 	}
 
 	@Test
@@ -58,6 +61,7 @@ public class HeartbeatPropertiesResolverTest {
 		p.setProperty("heartbeat.agent.application.name", "my-app");
 		p.setProperty("heartbeat.agent.url", "http://my.heartbeat.server/beat");
 		p.setProperty("heartbeat.agent.application.version", "1.0");
+		p.setProperty("heartbeat.agent.initial.delay", "1000");
 		System.setProperty("se.avanzabank.app.jmxport", "123");
 		HeartbeatPropertiesResolver resolver = new HeartbeatPropertiesResolver(() -> p);
 		HeartbeatProperties props = resolver.resolveProperties();
@@ -67,5 +71,18 @@ public class HeartbeatPropertiesResolverTest {
 		assertThat(props.getPid(), greaterThan(0));
 		assertThat(props.getJmxPort(), not(equalTo(Optional.empty())));
 		assertThat(props.getJmxPort().get(), equalTo(123));
+		assertThat(props.getInitialDelayMs(), equalTo(1000));
+	}
+
+	@Test
+	public void resolvePropertiesWithDefaultInitialDelay() throws Exception {
+		Properties p = new Properties();
+		p.setProperty("heartbeat.agent.application.name", "my-app");
+		p.setProperty("heartbeat.agent.url", "http://my.heartbeat.server/beat");
+		p.setProperty("heartbeat.agent.application.version", "1.0");
+		System.setProperty("se.avanzabank.app.jmxport", "123");
+		HeartbeatPropertiesResolver resolver = new HeartbeatPropertiesResolver(() -> p);
+		HeartbeatProperties props = resolver.resolveProperties();
+		assertThat(props.getInitialDelayMs(), equalTo(0));
 	}
 }

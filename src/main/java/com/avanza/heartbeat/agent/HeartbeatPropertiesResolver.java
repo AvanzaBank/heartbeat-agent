@@ -34,7 +34,9 @@ public class HeartbeatPropertiesResolver {
 	private final static String NAME_PROPERTY = "heartbeat.agent.application.name";
 	private final static String URL_PROPERTY = "heartbeat.agent.url";
 	private final static String VERSION_PROPERTY = "heartbeat.agent.application.version";
+	private final static String INITIAL_DELAY_PROPERTY = "heartbeat.agent.initial.delay";
 	private final static String DEFAULT_VERSION = "UNKNOWN"; // Used of version is not set
+	
 	
 	private final PropertySource propertySource;
 	
@@ -48,11 +50,12 @@ public class HeartbeatPropertiesResolver {
 		URL url = getUrl(props);
 		String applicationName = getRequiredProperty(props, NAME_PROPERTY);
 		int pid = getPid();
+		int initialDelayMs = getInitialDelay(props);
 		int jmxPort = getJmxPort();
 		if (jmxPort > 0) {
-			return new HeartbeatProperties(url, applicationName, pid, version, jmxPort);
+			return new HeartbeatProperties(url, applicationName, pid, version, initialDelayMs, jmxPort);
 		} else {
-			return new HeartbeatProperties(url, applicationName, pid, version);
+			return new HeartbeatProperties(url, applicationName, pid, version, initialDelayMs);
 		}
 	}
 
@@ -67,6 +70,10 @@ public class HeartbeatPropertiesResolver {
 
 	private String getVersion(Properties props) {
 		return Optional.ofNullable(props.getProperty(VERSION_PROPERTY)).orElse(DEFAULT_VERSION);
+	}
+
+	private int getInitialDelay(Properties props) {
+		return Integer.parseInt(Optional.ofNullable(props.getProperty(INITIAL_DELAY_PROPERTY)).orElse("0"));
 	}
 
 	private String getRequiredProperty(Properties props, String propertyName) {
