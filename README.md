@@ -16,7 +16,8 @@ Configuration properties can be specified either as system properties or in an e
 * `heartbeat.agent.application.name` - name of the application that is sending the heartbeats
 * `heartbeat.agent.url` - URL to send heartbeats to
 * `heartbeat.agent.application.version` - version of the application that is sending the heartbeats (optional)
-* `heartbeat.agent.initial.delay` - Initial delay in milliseconds before heartbeat starts
+* `heartbeat.agent.initial.delay` - Initial delay in milliseconds before heartbeat starts (default 0)
+* `heartbeat.agent.interval` - Interval in milliseconds between heartbeats (default 5000)
 
 ## Data sent with the heartbeats
 

@@ -34,9 +34,11 @@ public class HeartbeatProperties {
 	private final Integer jmxPort;
 	private final URL url;
 	private final int initialDelayMs;
+	private final int heartbeatIntervalMs;
 
-	public HeartbeatProperties(URL url, String applicationName, int pid, String version, int initialDelayMs, int jmxPort) {
+	public HeartbeatProperties(URL url, String applicationName, int pid, String version, int initialDelayMs, int heartbeatIntervalMs, int jmxPort) {
 		this.initialDelayMs = initialDelayMs;
+		this.heartbeatIntervalMs = heartbeatIntervalMs;
 		this.url = Objects.requireNonNull(url);
 		this.applicationName = Objects.requireNonNull(applicationName);
 		validatePid(pid);
@@ -46,8 +48,9 @@ public class HeartbeatProperties {
 		this.jmxPort = jmxPort;
 	}
 
-	public HeartbeatProperties(URL url, String applicationName, int pid, String version, int initialDelayMs) {
+	public HeartbeatProperties(URL url, String applicationName, int pid, String version, int initialDelayMs, int heartbeatIntervalMs) {
 		this.initialDelayMs = initialDelayMs;
+		this.heartbeatIntervalMs = heartbeatIntervalMs;
 		this.url = Objects.requireNonNull(url);
 		this.applicationName = Objects.requireNonNull(applicationName);
 		validatePid(pid);
@@ -92,10 +95,15 @@ public class HeartbeatProperties {
 		return initialDelayMs;
 	}
 	
+	public int getHeartbeatIntervalMs() {
+		return heartbeatIntervalMs;
+	}
+	
 	@Override
 	public String toString() {
 		return "HeartbeatProperties [applicationName=" + applicationName + ", pid=" + pid + ", version=" + version
-				+ ", jmxPort=" + jmxPort + ", url=" + url + ", initialDelayMs=" + initialDelayMs + "]";
+				+ ", jmxPort=" + jmxPort + ", url=" + url + ", initialDelayMs=" + initialDelayMs
+				+ ", heartbeatIntervalMs=" + heartbeatIntervalMs + "]";
 	}
 
 }

@@ -56,8 +56,8 @@ public class HearbeatClientTest {
 	
     @Test
     public void allProperties() throws Exception {
-    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 0, 11223);
-    	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"), 5000);
+    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 0, 5000, 11223);
+    	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"));
     	client.start();
     	Map<String, String> expected = new HashMap<>();
     	expected.put("name", "my-app");
@@ -70,8 +70,8 @@ public class HearbeatClientTest {
 
     @Test
     public void optionalJmxPort() throws Exception {
-    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 0);
-    	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"), 5000);
+    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 0, 5000);
+    	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"));
     	client.start();
     	Map<String, String> expected = new HashMap<>();
     	expected.put("name", "my-app");
@@ -84,8 +84,8 @@ public class HearbeatClientTest {
     @SuppressWarnings("unchecked")
 	@Test
     public void moreThanOneHeartbeatIsMade() throws Exception {
-    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 0, 11223);
-    	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"), 200);
+    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 0, 200, 11223);
+    	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"));
     	client.start();
     	Map<String, String> expected = new HashMap<>();
     	expected.put("name", "my-app");
@@ -98,8 +98,8 @@ public class HearbeatClientTest {
     
 	@Test
     public void handleInitialDelay() throws Exception {
-    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 2000, 11223);
-    	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"), 200);
+    	HeartbeatProperties props = new HeartbeatProperties(new URL("http://localhost:" + webRule.getPort()), "my-app", 123, "1.0.0", 2000, 11223, 200);
+    	client = new HeartbeatClient(props, HeartbeatClientId.fromString("abc123123abc"));
     	client.start();
     	Thread.sleep(1000);
     	assertThat(hbServer.getHandledRequests(), empty());

@@ -37,14 +37,12 @@ public class HeartbeatClient {
 
 	private static final int READ_TIMEOUT = 2000;
 	private static final int CONNECT_TIMEOUT = 1000;
-	private static final long DEFAULT_HEARTBEAT_INTERVAL = 5000;
 	private static final String USER_AGENT = "Heartbeat Client";
 	private final HeartbeatClientId id;
 	private final HeartbeatProperties props;
 	private final URL heartbeatUrl;
 	private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor(HeartbeatClient::createDaemonThread);
 	private final Logger log = new Logger(HeartbeatClient.class);
-	private final long heartbeatInterval;
 	
 	private static Thread createDaemonThread(Runnable r) {
 		Thread t = new Thread(r);
@@ -54,19 +52,18 @@ public class HeartbeatClient {
 	}
 
 	public HeartbeatClient(HeartbeatProperties props) {
-		this(props, HeartbeatClientId.newId(), DEFAULT_HEARTBEAT_INTERVAL);
+		this(props, HeartbeatClientId.newId());
 	}
 
-	HeartbeatClient(HeartbeatProperties props, HeartbeatClientId id, long heartbeatInterval) {
+	HeartbeatClient(HeartbeatProperties props, HeartbeatClientId id) {
 		this.props = Objects.requireNonNull(props);
 		this.id = id;
 		this.heartbeatUrl = buildUrl();
-		this.heartbeatInterval = heartbeatInterval;
 	}
 
 	public void start() {
 		log.info("Starting heartbeat client with properties: " + props);
-		scheduledExecutor.scheduleAtFixedRate(this::doBeat, props.getInitialDelayMs(), heartbeatInterval, TimeUnit.MILLISECONDS);
+		scheduledExecutor.scheduleAtFixedRate(this::doBeat, props.getInitialDelayMs(), props.getHeartbeatIntervalMs(), TimeUnit.MILLISECONDS);
 	}
 	
 	public void stop() {
@@ -106,7 +103,7 @@ public class HeartbeatClient {
 		connection.setReadTimeout(READ_TIMEOUT);
 		connection.setRequestMethod("GET");
 		connection.setRequestProperty("User-Agent", USER_AGENT);
-		connection.addRequestProperty("beat-interval", Long.toString(heartbeatInterval));
+		connection.addRequestProperty("beat-interval", Long.toString(props.getHeartbeatIntervalMs()));
 		return connection;
 	}
 
