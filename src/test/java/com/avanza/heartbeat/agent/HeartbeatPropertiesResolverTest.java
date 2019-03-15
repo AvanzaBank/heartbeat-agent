@@ -55,6 +55,7 @@ public class HeartbeatPropertiesResolverTest {
 		assertThat(props.getJmxPort().get(), equalTo(123));
 		assertThat(props.getInitialDelayMs(), equalTo(1000));
 		assertThat(props.getHeartbeatIntervalMs(), equalTo(2000));
+		assertThat(props.isEnabled(), equalTo(true));
 	}
 
 	@Test
@@ -74,6 +75,7 @@ public class HeartbeatPropertiesResolverTest {
 		assertThat(props.getJmxPort(), not(equalTo(Optional.empty())));
 		assertThat(props.getJmxPort().get(), equalTo(123));
 		assertThat(props.getInitialDelayMs(), equalTo(1000));
+		assertThat(props.isEnabled(), equalTo(true));
 	}
 
 	@Test
@@ -100,4 +102,28 @@ public class HeartbeatPropertiesResolverTest {
 		assertThat(props.getHeartbeatIntervalMs(), equalTo(5000));
 	}
 
+	@Test
+	public void resolvePropertiesWithEnabled() throws Exception {
+		Properties p = new Properties();
+		p.setProperty("heartbeat.agent.application.name", "my-app");
+		p.setProperty("heartbeat.agent.url", "http://my.heartbeat.server/beat");
+		p.setProperty("heartbeat.agent.application.version", "1.0");
+		p.setProperty("heartbeat.agent.enabled", "true");
+		HeartbeatPropertiesResolver resolver = new HeartbeatPropertiesResolver(() -> p);
+		HeartbeatProperties props = resolver.resolveProperties();
+		assertThat(props.isEnabled(), equalTo(true));
+	}
+
+	@Test
+	public void resolvePropertiesWithDisabled() throws Exception {
+		Properties p = new Properties();
+		p.setProperty("heartbeat.agent.application.name", "my-app");
+		p.setProperty("heartbeat.agent.url", "http://my.heartbeat.server/beat");
+		p.setProperty("heartbeat.agent.application.version", "1.0");
+		p.setProperty("heartbeat.agent.enabled", "false");
+		HeartbeatPropertiesResolver resolver = new HeartbeatPropertiesResolver(() -> p);
+		HeartbeatProperties props = resolver.resolveProperties();
+		assertThat(props.isEnabled(), equalTo(false));
+	}
 }
+

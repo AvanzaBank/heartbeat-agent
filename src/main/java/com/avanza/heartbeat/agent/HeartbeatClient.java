@@ -62,13 +62,19 @@ public class HeartbeatClient {
 	}
 
 	public void start() {
-		log.info("Starting heartbeat client with properties: " + props);
-		scheduledExecutor.scheduleAtFixedRate(this::doBeat, props.getInitialDelayMs(), props.getHeartbeatIntervalMs(), TimeUnit.MILLISECONDS);
+		if (props.isEnabled()) {
+			log.info("Starting heartbeat client with properties: " + props);
+			scheduledExecutor.scheduleAtFixedRate(this::doBeat, props.getInitialDelayMs(), props.getHeartbeatIntervalMs(), TimeUnit.MILLISECONDS);
+		} else {
+			log.warn("Heartbeat agent is disabled");
+		}
 	}
 	
 	public void stop() {
-		log.info("Stopping heartbeat client with properties: " + props);
-		scheduledExecutor.shutdown();
+		if (props.isEnabled()) {
+			log.info("Stopping heartbeat client with properties: " + props);
+			scheduledExecutor.shutdown();
+		}
 	}
 	
 	private void doBeat() {

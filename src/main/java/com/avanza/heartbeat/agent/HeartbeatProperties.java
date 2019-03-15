@@ -28,6 +28,7 @@ import java.util.Optional;
 
 public class HeartbeatProperties {
 
+	private final boolean enabled;
 	private final String applicationName;
 	private final int pid;
 	private final String version;
@@ -35,8 +36,9 @@ public class HeartbeatProperties {
 	private final URL url;
 	private final int initialDelayMs;
 	private final int heartbeatIntervalMs;
-
-	public HeartbeatProperties(URL url, String applicationName, int pid, String version, int initialDelayMs, int heartbeatIntervalMs, int jmxPort) {
+	
+	public HeartbeatProperties(boolean enabled, URL url, String applicationName, int pid, String version, int initialDelayMs, int heartbeatIntervalMs, int jmxPort) {
+		this.enabled = enabled;
 		this.initialDelayMs = initialDelayMs;
 		this.heartbeatIntervalMs = heartbeatIntervalMs;
 		this.url = Objects.requireNonNull(url);
@@ -48,7 +50,8 @@ public class HeartbeatProperties {
 		this.jmxPort = jmxPort;
 	}
 
-	public HeartbeatProperties(URL url, String applicationName, int pid, String version, int initialDelayMs, int heartbeatIntervalMs) {
+	public HeartbeatProperties(boolean enabled, URL url, String applicationName, int pid, String version, int initialDelayMs, int heartbeatIntervalMs) {
+		this.enabled = enabled;
 		this.initialDelayMs = initialDelayMs;
 		this.heartbeatIntervalMs = heartbeatIntervalMs;
 		this.url = Objects.requireNonNull(url);
@@ -99,11 +102,15 @@ public class HeartbeatProperties {
 		return heartbeatIntervalMs;
 	}
 	
+	public boolean isEnabled() {
+		return enabled;
+	}
+	
 	@Override
 	public String toString() {
-		return "HeartbeatProperties [applicationName=" + applicationName + ", pid=" + pid + ", version=" + version
-				+ ", jmxPort=" + jmxPort + ", url=" + url + ", initialDelayMs=" + initialDelayMs
-				+ ", heartbeatIntervalMs=" + heartbeatIntervalMs + "]";
+		return "HeartbeatProperties [enabled=" + enabled + ", applicationName=" + applicationName + ", pid=" + pid
+				+ ", version=" + version + ", jmxPort=" + jmxPort + ", url=" + url + ", initialDelayMs="
+				+ initialDelayMs + ", heartbeatIntervalMs=" + heartbeatIntervalMs + "]";
 	}
 
 }

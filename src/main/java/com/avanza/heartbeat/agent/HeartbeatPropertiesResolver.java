@@ -32,6 +32,7 @@ import java.util.Properties;
 public class HeartbeatPropertiesResolver {
 	
 	private final static String NAME_PROPERTY = "heartbeat.agent.application.name";
+	private final static String ENABLED_PROPERTY = "heartbeat.agent.enabled";
 	private final static String URL_PROPERTY = "heartbeat.agent.url";
 	private final static String VERSION_PROPERTY = "heartbeat.agent.application.version";
 	private final static String INITIAL_DELAY_PROPERTY = "heartbeat.agent.initial.delay";
@@ -49,15 +50,16 @@ public class HeartbeatPropertiesResolver {
 		Properties props = propertySource.getProperties();
 		String version = getVersion(props);
 		URL url = getUrl(props);
+		boolean enabled = getHeartbeatEnabled(props);
 		String applicationName = getRequiredProperty(props, NAME_PROPERTY);
 		int pid = getPid();
 		int initialDelayMs = getInitialDelay(props);
 		int interval = getHeartbeatInterval(props);
 		int jmxPort = getJmxPort();
 		if (jmxPort > 0) {
-			return new HeartbeatProperties(url, applicationName, pid, version, initialDelayMs, interval, jmxPort);
+			return new HeartbeatProperties(enabled, url, applicationName, pid, version, initialDelayMs, interval, jmxPort);
 		} else {
-			return new HeartbeatProperties(url, applicationName, pid, version, initialDelayMs, interval);
+			return new HeartbeatProperties(enabled, url, applicationName, pid, version, initialDelayMs, interval);
 		}
 	}
 
@@ -80,6 +82,10 @@ public class HeartbeatPropertiesResolver {
 
 	private int getHeartbeatInterval(Properties props) {
 		return Integer.parseInt(Optional.ofNullable(props.getProperty(INTERVAL_PROPERTY)).orElse(DEFAULT_INTERVAL));
+	}
+
+	private boolean getHeartbeatEnabled(Properties props) {
+		return Boolean.parseBoolean(Optional.ofNullable(props.getProperty(ENABLED_PROPERTY)).orElse("true"));
 	}
 
 	private String getRequiredProperty(Properties props, String propertyName) {
