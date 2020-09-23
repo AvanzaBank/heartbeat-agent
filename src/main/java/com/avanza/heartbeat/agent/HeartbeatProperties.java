@@ -105,7 +105,11 @@ public class HeartbeatProperties {
 	public boolean isEnabled() {
 		return enabled;
 	}
-	
+
+	public int getNumberOfAllowedTimeoutsBeforeWarning() {
+		return 3;
+	}
+
 	@Override
 	public String toString() {
 		return "HeartbeatProperties [enabled=" + enabled + ", applicationName=" + applicationName + ", pid=" + pid

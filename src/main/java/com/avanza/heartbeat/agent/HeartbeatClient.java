@@ -26,12 +26,14 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class HeartbeatClient {
 
@@ -43,6 +45,7 @@ public class HeartbeatClient {
 	private final URL heartbeatUrl;
 	private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor(HeartbeatClient::createDaemonThread);
 	private final Logger log = new Logger(HeartbeatClient.class);
+	private final AtomicInteger consecutiveTimeouts = new AtomicInteger();
 	
 	private static Thread createDaemonThread(Runnable r) {
 		Thread t = new Thread(r);
@@ -89,6 +92,25 @@ public class HeartbeatClient {
 	}
 
 	private void tryBeat() throws IOException {
+		try {
+			sendHeartbeat();
+			consecutiveTimeouts.set(0);
+		} catch (SocketTimeoutException e) {
+			final int count = consecutiveTimeouts.incrementAndGet();
+			final int threshold = props.getNumberOfAllowedTimeoutsBeforeWarning();
+			if (count > threshold) {
+				throw e;
+			}
+			log.info("Failed to connect to heartbeat server (timeout). Url was " + props.getUrl() + ". "
+					+ "This has now happened " + count + " times. "
+					+ "Will warn when this has happened more than " + threshold + " times.");
+		} catch (Exception e) {
+			consecutiveTimeouts.set(0);
+			throw e;
+		}
+	}
+
+	private void sendHeartbeat() throws IOException {
 		HttpURLConnection connection = createConnection(heartbeatUrl);
 		int responseCode = connectAndGetResponseCode(connection);
 		if (responseCode != HttpURLConnection.HTTP_OK) {
